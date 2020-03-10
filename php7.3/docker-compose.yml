@@ -1,0 +1,53 @@
+version: '3.7'
+
+services:
+  nginx:
+    image: primehost/nginx:18.04
+    container_name: ${P_DOMAIN}-nginx
+    hostname: ${P_DOMAIN}-nginx
+    volumes:
+      - /var/docker/container/${P_DOMAIN}/html:/var/www/html
+    environment:
+      PRIMEHOST_USER: ${P_USER}
+      PRIMEHOST_PASSWORD: ${P_PASSWORD}
+      PRIMEHOST_DOMAIN: ${P_DOMAIN}
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.${P_ROUTER}.tls.certresolver=le
+      - traefik.http.routers.${P_ROUTER}.entrypoints=websecure
+      - traefik.http.services.${P_ROUTER}.loadbalancer.server.port=80
+      - traefik.http.routers.${P_ROUTER}.rule=Host(`${P_DOMAIN}`)
+
+  php:
+    image: primehost/wordpress
+    container_name: ${P_DOMAIN}-php
+    hostname: ${P_DOMAIN}-php
+    volumes:
+      - /var/docker/container/${P_DOMAIN}/html:/var/www/html
+    environment:
+      WORDPRESS_DB_HOST: ${P_DOMAIN}-db
+      WORDPRESS_DB_USER: ${P_USER}
+      WORDPRESS_DB_PASSWORD: ${P_PASSWORD}
+      WORDPRESS_DB_NAME: wordpress
+      PRIMEHOST_USER: ${P_USER}
+      PRIMEHOST_PASSWORD: ${P_PASSWORD}
+      PRIMEHOST_DOMAIN: ${P_DOMAIN}
+      LETSENCRYPT_EMAIL: ${P_MAIL}
+
+  db:
+    image: mariadb:10.3
+    restart: always
+    container_name: ${P_DOMAIN}-db
+    hostname: ${P_DOMAIN}-db
+    environment:
+      MYSQL_DATABASE: wordpress
+      MYSQL_USER: ${P_USER}
+      MYSQL_PASSWORD: ${P_PASSWORD}
+      MYSQL_ROOT_PASSWORD: ${P_PASSWORD}
+    volumes:
+      - /var/docker/container/${P_DOMAIN}/mysql:/var/lib/mysql
+
+networks:
+  default:
+    external:
+      name: web
