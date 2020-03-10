@@ -19,7 +19,7 @@ services:
       - traefik.http.routers.${P_ROUTER}.rule=Host(`${P_DOMAIN}`)
 
   php:
-    image: primehost/wordpress
+    image: primehost/wordpress:${P_PHP}
     container_name: ${P_DOMAIN}-php
     hostname: ${P_DOMAIN}-php
     volumes:
