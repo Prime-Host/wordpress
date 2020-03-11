@@ -17,13 +17,9 @@ fi
 
 # Wordpress specific changes
 if [ ! -f /var/www/html/wp-config.php ]; then
-  # Download wordpress
-  cd /var/www/html/ \
-  && curl -o latest.tar.gz -fSL "https://wordpress.org/latest.tar.gz" \
-  && tar xvf latest.tar.gz \
-  && mv wordpress/* . \
-  && rm -r wordpress latest.tar.gz \
-  && chown -R $PRIMEHOST_USER:$PRIMEHOST_USER /var/www/html
+  # Copy wordpress
+  mv /usr/src/wordpress/* /var/www/html/.
+  chown -R $PRIMEHOST_USER:$PRIMEHOST_USER /var/www/html
 
   # install wordpress cli
   cd /var/www/html/
@@ -32,18 +28,18 @@ if [ ! -f /var/www/html/wp-config.php ]; then
   mv /var/www/html/wp-cli.phar /usr/local/bin/wp
 
 # setup db connection and create admin user
-sudo -u $PRIMEHOST_USER bash << EOF
+  sudo -u $PRIMEHOST_USER bash << EOF
+  sleep 8
   cd /var/www/html/
-  sleep 3
-  /usr/local/bin/wp config create --dbname=wordpress --dbuser=$PRIMEHOST_USER --dbhost=${PRIMEHOST_DOMAIN}-db --dbpass=$PRIMEHOST_PASSWORD
-  /usr/local/bin/wp core install --url=https://${PRIMEHOST_DOMAIN} --title=${PRIMEHOST_DOMAIN} --admin_user=$PRIMEHOST_USER --admin_password=$PRIMEHOST_PASSWORD --admin_email=$LETSENCRYPT_EMAIL
+  wp config create --dbname=wordpress --dbuser=$PRIMEHOST_USER --dbhost=${PRIMEHOST_DOMAIN}-db --dbpass=$PRIMEHOST_PASSWORD
+  wp core install --url=https://${PRIMEHOST_DOMAIN} --title=${PRIMEHOST_DOMAIN} --admin_user=$PRIMEHOST_USER --admin_password=$PRIMEHOST_PASSWORD --admin_email=$LETSENCRYPT_EMAIL
+  wp language core install de_DE
+  wp site switch-language de_DE
 EOF
 fi
 
-if grep -q "HTTPS" wp-config.php; then
-  echo "HTTPS already active"
-else
-  sed -i -e "/table_prefix/a\
+if ! grep -q "HTTPS" wp-config.php; then
+sed -i -e "/table_prefix/a\
 \$_SERVER['HTTPS'] = 'on';" /var/www/html/wp-config.php
 fi
 
