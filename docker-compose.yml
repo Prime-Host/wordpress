@@ -29,7 +29,7 @@ services:
       - traefik.http.routers.${P_ROUTER}.tls.certresolver=le
       - traefik.http.routers.${P_ROUTER}.entrypoints=websecure
       - traefik.http.services.${P_ROUTER}.loadbalancer.server.port=80
-      - traefik.http.routers.${P_ROUTER}.rule=Host(`${P_DOMAIN}`) || Host(`${P_EXTRA_DOMAIN}`)
+      - traefik.http.routers.${P_ROUTER}.rule=Host(`${P_DOMAIN}`${P_EXTRA_DOMAIN})
 
   php:
     image: primehost/wordpress:${P_PHP}
