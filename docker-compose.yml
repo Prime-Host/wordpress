@@ -12,14 +12,14 @@ services:
       MYSQL_PASSWORD: ${P_PASSWORD}
       MYSQL_ROOT_PASSWORD: ${P_PASSWORD}
     volumes:
-      - /var/docker/container/${P_DOMAIN}/mysql:/var/lib/mysql
+      - /var/docker-data/container/${P_DOMAIN}/mysql:/var/lib/mysql
 
   nginx:
-    image: primehost/nginx:18.04
+    image: primehost/wordpress:nginx
     container_name: ${P_DOMAIN}-nginx
     hostname: ${P_DOMAIN}-nginx
     volumes:
-      - /var/docker/container/${P_DOMAIN}/html:/var/www/html
+      - /var/docker-data/container/${P_DOMAIN}/html:/var/www/html
     environment:
       PRIMEHOST_USER: ${P_USER}
       PRIMEHOST_PASSWORD: ${P_PASSWORD}
@@ -38,7 +38,7 @@ services:
     depends_on:
       - db
     volumes:
-      - /var/docker/container/${P_DOMAIN}/html:/var/www/html
+      - /var/docker-data/container/${P_DOMAIN}/html:/var/www/html
     environment:
       WORDPRESS_DB_HOST: ${P_DOMAIN}-db
       WORDPRESS_DB_USER: ${P_USER}
