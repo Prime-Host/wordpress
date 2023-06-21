@@ -29,7 +29,7 @@ if [ ! -f /var/www/html/wp-config.php ]; then
 
 # setup db connection and create admin user
   sudo -u $PRIMEHOST_USER bash << EOF
-  sleep 8
+  sleep 20
   cd /var/www/html/
   wp config create --dbname=wordpress --dbuser=$PRIMEHOST_USER --dbhost=${PRIMEHOST_DOMAIN}-db --dbpass=$PRIMEHOST_PASSWORD
   wp core install --url=https://${PRIMEHOST_DOMAIN} --title=${PRIMEHOST_DOMAIN} --admin_user=$PRIMEHOST_USER --admin_password=$PRIMEHOST_PASSWORD --admin_email=$LETSENCRYPT_EMAIL
