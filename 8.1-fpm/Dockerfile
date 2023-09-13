@@ -6,7 +6,7 @@ ARG DEBIAN_FRONTEND=noninteractive
 # install nginx 
 RUN mkdir /var/run/sshd \
  && apt-get update \
- && apt-get install -y cron python-setuptools wget curl git nano vim sudo unzip \ 
+ && apt-get install -y cron wget curl git nano vim sudo unzip \ 
     openssh-server openssl zsh supervisor mariadb-client
 
 RUN wget https://github.com/robbyrussell/oh-my-zsh/raw/master/tools/install.sh -O - | zsh || true \
